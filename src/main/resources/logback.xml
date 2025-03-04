@@ -1,0 +1,35 @@
+<!-- Logback was written by the same developer who implemented Log4j with the goal to become its successor.
+ It follows the same concepts as Log4j but was rewritten to improve the performance, to support SLF4J natively,-->
+<configuration>
+
+    <property name="LOG_DIR" value="B:/log4j-app" />
+
+    <!-- *** Config log on console *** -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- 19:02:00.433 [main] WARN  c.t.u.UnderstandLog4jNewVersionApplication 21 : Hello World -->
+            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %line : %msg%n</pattern>-->
+            <!--2025-02-25 18:59:48.425 [main] WARN  c.t.u.UnderstandLog4jNewVersionApplication.displayLogBack(21) - Hello World-->
+            <!--<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M\(%line\) - %msg%n</pattern>-->
+            <!-- color good for console but it's not in file -->
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %highlight(%-5level) [%blue(%t)] %green(%logger{45}) %line : %msg%n%throwable</pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_DIR}/test-log-by-logback.log</file>
+        <encoder>
+            <!-- color good for console but it's not in file -->
+            <!--<pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %highlight(%-5level) [%blue(%t)] %green(%logger{45}) %line : %msg%n%throwable</pattern>-->
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} %line : %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- set level log on console and file -->
+    <root level="WARN,TRACE,DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    <!-- debug only log on file-->
+
+</configuration>
