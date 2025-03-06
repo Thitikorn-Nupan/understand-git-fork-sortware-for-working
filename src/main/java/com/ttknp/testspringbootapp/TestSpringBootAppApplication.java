@@ -56,9 +56,6 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
     }
 
 
-    public static void main(String[] args) {
-        SpringApplication.run(TestSpringBootAppApplication.class, args);
-    }
 
     @Override
     public void run(String... args) throws Exception {
@@ -72,5 +69,10 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
             }
         });
     }
+
+    public static void main(String[] args) {
+        SpringApplication.run(TestSpringBootAppApplication.class, args);
+    }
+
 
 }
