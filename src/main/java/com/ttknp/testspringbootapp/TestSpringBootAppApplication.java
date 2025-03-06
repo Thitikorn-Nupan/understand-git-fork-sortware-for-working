@@ -62,7 +62,7 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // you have to specify database name on url
+        // ** you have to specify database name on url if table you fecthing it's not default schema
         String sql = "select * from A_APP.USERS_DETAIL;";
         jdbcTemplate.query(sql, new RowMapper<Object>() {
             @Override
