@@ -36,7 +36,24 @@ class TestSpringBootAppApplicationTests {
         // then - verify the output
         response
                 .andExpect(status().isAccepted())
-                .andExpect(header().stringValues("Content-Type", "text/html;charset=UTF-8"))
+                .andExpect(header().stringValues("Content-Type", "text/plain;charset=UTF-8"))
+                .andDo(print());
+    }
+
+
+    @Test
+    public void testHelloWorldPostEndpoint() throws Exception {
+
+        RequestBuilder request = MockMvcRequestBuilders
+                .post("/post");
+
+        // ** ResultActions class to handle the response of the REST API.
+        ResultActions response = mockMvc.perform(request);
+
+        // then - verify the output
+        response
+                .andExpect(status().isAccepted())
+                .andExpect(header().stringValues("Data", "Hello World"))
                 .andDo(print());
     }
 
