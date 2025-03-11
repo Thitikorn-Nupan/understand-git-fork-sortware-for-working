@@ -12,7 +12,7 @@
     <artifactId>test-spring-boot-app</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>test-spring-boot-app</name>
-    <description>test-spring-boot-app</description>
+    <description>test-spring-boot-app-for-working</description>
     <url/>
     <licenses>
         <license/>
@@ -39,6 +39,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>annotationProcessor</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jdbc</artifactId>
         </dependency>
     </dependencies>
 
