@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
 
 @Slf4j // config logback by using annotation
 @SpringBootApplication
@@ -67,13 +66,11 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
                 .body(null);
     }
 
-
-
     @Override
     public void run(String... args) throws Exception {
-        // ** you have to specify database name on url if table you fecthing it's not default schema
-        // String sql = "select * from TTKNP.A_APP.USERS_DETAIL;";
-        /*
+        // ** you have to specify database name on url if table you work it's not default schema
+        /**
+        String sql = "select * from TTKNP.A_APP.USERS_DETAIL;";
         jdbcTemplate.query(sql, new RowMapper<Object>() {
             @Override
             public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -82,7 +79,6 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
             }
         });
         */
-        // log.info("Running test {}",userDetailRepo.count());
         userDetailRepo.findAll().forEach((user) -> {
             log.info("User.id: {}" , user.id);
         });
@@ -91,6 +87,5 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
     public static void main(String[] args) {
         SpringApplication.run(TestSpringBootAppApplication.class, args);
     }
-
 
 }
