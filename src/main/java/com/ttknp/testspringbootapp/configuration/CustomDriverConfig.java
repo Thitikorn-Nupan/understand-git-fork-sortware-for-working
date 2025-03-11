@@ -6,9 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-// @ComponentScan(basePackages="net.spring.coding") /* tells spring container looking at this folder */
 @Configuration
-@PropertySource("classpath:info/configs.properties") // @PropertySource("classpath:") using to include properties file */
+@PropertySource("classpath:info/configs.properties") // @PropertySource("classpath:") using to include properties file
 public class CustomDriverConfig {
 
     private DriverManagerDataSource dataSource;
