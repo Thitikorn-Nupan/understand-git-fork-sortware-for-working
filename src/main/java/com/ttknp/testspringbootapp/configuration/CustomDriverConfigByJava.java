@@ -8,7 +8,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
 @PropertySource("classpath:info/configs.properties") // @PropertySource("classpath:") using to include properties file
-public class CustomDriverConfig {
+public class CustomDriverConfigByJava {
 
     private DriverManagerDataSource dataSource;
     @Value("${DRIVER}")
@@ -22,7 +22,8 @@ public class CustomDriverConfig {
     @Value("${SQL.PASSWORD}")
     private String password;
 
-    @Bean
+
+    @Bean("dataSource1")
     public DriverManagerDataSource dataSource () {
         dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(driver);
