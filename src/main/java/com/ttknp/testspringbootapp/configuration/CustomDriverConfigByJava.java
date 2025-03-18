@@ -3,6 +3,7 @@ package com.ttknp.testspringbootapp.configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -24,6 +25,10 @@ public class CustomDriverConfigByJava {
 
 
     @Bean("dataSource1")
+    @Primary
+    // ** fix No qualifying bean of type ...@Reposioties on jdbc
+    // have to mark @Primary if you have multiple bean that's same
+    // if i you do not do your @Repositories won't work
     public DriverManagerDataSource dataSource () {
         dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(driver);

@@ -34,14 +34,16 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
     private UserDetailRepo userDetailRepo;
 
     @Autowired // custom connect with java code
-    public TestSpringBootAppApplication(@Qualifier("dataSource2") DataSource dataSource, UserDetailRepo userDetailRepo) { // , UserDetailRepo userDetailRepo
+    public TestSpringBootAppApplication(@Qualifier("dataSource2") DataSource dataSource,UserDetailRepo userDetailRepo) { // , UserDetailRepo userDetailRepo
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.userDetailRepo = userDetailRepo;
     }
-    /*@Autowired
+    /*
+    @Autowired
     public TestSpringBootAppApplication(CustomDriverConfigByXML customDriverConfigByXML) {
         this.customDriverConfigByXML = customDriverConfigByXML;
-    }*/
+    }
+    */
 
     // ** private static final Logger log = LoggerFactory.getLogger(TestSpringBootAppApplication.class);
 
@@ -78,13 +80,12 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
         // Use the dataSource
         System.out.println(dataSource);
     }*/
-    //@Override
+    @Override
     public void run(String... args) throws Exception {
 
         userDetailRepo.findAll().forEach((user) -> {
             log.info("User.id: {}" , user.id);
         });
-
 
         // ** you have to specify database name on url if table you work it's not default schema
         /*String sql = "select * from TTKNP.A_APP.USERS_DETAIL;";
@@ -95,6 +96,7 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
                 return null;
             }
         });*/
+
 
     }
 
