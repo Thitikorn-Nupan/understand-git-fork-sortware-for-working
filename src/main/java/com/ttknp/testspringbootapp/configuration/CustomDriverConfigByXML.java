@@ -20,7 +20,6 @@ import javax.sql.DataSource;
 public class CustomDriverConfigByXML {
 
 // ** No need below , now you can access all beans on @ImportResource("classpath:xml/spring-context.xml")
-
 // public NamedParameterJdbcTemplate jdbcTemplate; // same
 //    public JdbcTemplate jdbcTemplate;
 //

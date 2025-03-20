@@ -1,3 +1,4 @@
+/*
 package com.ttknp.testspringbootapp.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -24,8 +25,8 @@ public class CustomDriverConfigByJava {
     private String password;
 
 
-    @Bean("dataSource1")
-    @Primary
+    @Bean("dataSourceSQL1")
+    // @Primary
     // ** fix No qualifying bean of type ...@Reposioties on jdbc
     // have to mark @Primary if you have multiple bean that's same
     // if i you do not do your @Repositories won't work
@@ -38,3 +39,4 @@ public class CustomDriverConfigByJava {
         return dataSource ;
     }
 }
+*/
