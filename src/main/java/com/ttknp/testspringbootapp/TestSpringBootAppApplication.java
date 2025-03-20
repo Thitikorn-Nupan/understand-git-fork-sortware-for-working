@@ -1,5 +1,6 @@
 package com.ttknp.testspringbootapp;
 
+import com.ttknp.testspringbootapp.repositories.StudentRepo;
 import com.ttknp.testspringbootapp.repositories.UserDetailRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +31,21 @@ import java.sql.SQLException;
 @Component
 public class TestSpringBootAppApplication implements CommandLineRunner {
 
-    private JdbcTemplate jdbcTemplate;
-
+    private JdbcTemplate jdbcTemplateSQL;
+    private JdbcTemplate jdbcTemplateMySQL;
     private UserDetailRepo userDetailRepo;
+    private StudentRepo studentRepo;
 
     @Autowired // custom connect with java code
-    public TestSpringBootAppApplication(@Qualifier("dataSource2") DataSource dataSource,UserDetailRepo userDetailRepo) { // , UserDetailRepo userDetailRepo
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    // multiple databases
+    public TestSpringBootAppApplication(@Qualifier("dataSourceSQL2") DataSource dataSourceSQL,
+                                        @Qualifier("dataSourceMySQL")  DataSource dataSourceMySQL,
+                                        UserDetailRepo userDetailRepo,
+                                        StudentRepo studentRepo) { // , UserDetailRepo userDetailRepo
+        this.jdbcTemplateSQL = new JdbcTemplate(dataSourceSQL);
+        this.jdbcTemplateMySQL = new JdbcTemplate(dataSourceMySQL);
         this.userDetailRepo = userDetailRepo;
+        this.studentRepo = studentRepo;
     }
     /*
     @Autowired
@@ -83,21 +92,38 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+
+        /*
+        // work
         userDetailRepo.findAll().forEach((user) -> {
             log.info("User.id: {}" , user.id);
         });
+        // not worked
+        studentRepo.findAll().forEach((student) -> {
+            log.info("Student.id: {}" , student.id);
+        });
+        */
 
         // ** you have to specify database name on url if table you work it's not default schema
-        /*String sql = "select * from TTKNP.A_APP.USERS_DETAIL;";
-        jdbcTemplate.query(sql, new RowMapper<Object>() {
+        /**
+         * manual queries
+        String sql = "select * from TTKNP.A_APP.USERS_DETAIL;";
+        jdbcTemplateSQL.query(sql, new RowMapper<Object>() {
             @Override
             public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                log.debug("ID : {}", rs.getInt("ID"));
+                log.debug("(SQL) ID : {}", rs.getInt("ID"));
                 return null;
             }
-        });*/
-
-
+        });
+        sql = "select * from TTKNP.students;";
+        jdbcTemplateMySQL.query(sql, new RowMapper<Object>() {
+            @Override
+            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                log.debug("(MySQL) ID : {}", rs.getInt("id"));
+                return null;
+            }
+        });
+        */
     }
 
     // ***
@@ -112,7 +138,6 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
 
     public static void main(String[] args) throws SQLException {
         SpringApplication.run(TestSpringBootAppApplication.class, args);
-        // getDataSourceFromXmlAndTestConfig();
     }
 
 }
