@@ -13,14 +13,12 @@
     </bean>
 
 
-
     <bean name="dataSourceMySQL" id="dataSourceMySQL" class="org.springframework.jdbc.datasource.DriverManagerDataSource" > <!--destroy-method="close"-->
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
         <property name="url" value="jdbc:mysql://localhost:3306/ttknp"/>
         <property name="username" value="root"/>
         <property name="password" value=""/>
     </bean>
-
 
 
 </beans>
