@@ -124,6 +124,22 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
             }
         });
         */
+        String sql = "select * from TTKNP.A_APP.USERS_DETAIL;";
+        jdbcTemplateSQL.query(sql, new RowMapper<Object>() {
+            @Override
+            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                log.debug("(SQL) ID : {}", rs.getInt("ID"));
+                return null;
+            }
+        });
+        sql = "select * from TTKNP.students;";
+        jdbcTemplateMySQL.query(sql, new RowMapper<Object>() {
+            @Override
+            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                log.debug("(MySQL) ID : {}", rs.getInt("id"));
+                return null;
+            }
+        });
     }
 
     // ***

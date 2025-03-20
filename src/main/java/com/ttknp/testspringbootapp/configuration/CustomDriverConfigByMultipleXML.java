@@ -1,0 +1,11 @@
+package com.ttknp.testspringbootapp.configuration;
+
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+
+
+// Config bean on xml
+@Configuration
+@ImportResource({"classpath:xml/spring-context-h2-database.xml","classpath:xml/spring-context-mysql-database.xml"}) //
+public class CustomDriverConfigByMultipleXML { }
