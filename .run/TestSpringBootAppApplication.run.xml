@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="TestSpringBootAppApplication" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="com.ttknp.testspringbootapp.TestSpringBootAppApplication" />
+    <module name="test-spring-boot-app" />
+    <!--<method v="2">
+      <option name="Make" enabled="true" />
+    </method>-->
+  </configuration>
+</component>
