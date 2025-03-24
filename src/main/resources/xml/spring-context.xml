@@ -5,7 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- primary="true" work same @Primary for fix error have the same beans -->
-    <bean primary="true" name="dataSourceSQL2" id="dataSourceSQL2" class="org.springframework.jdbc.datasource.DriverManagerDataSource" > <!--destroy-method="close"-->
+    <bean primary="true" name="dataSourceSQL" id="dataSourceSQL" class="org.springframework.jdbc.datasource.DriverManagerDataSource" > <!--destroy-method="close"-->
         <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
         <property name="url" value="jdbc:sqlserver://localhost:1433;database=TTKNP;encrypt=true;trustServerCertificate=true;"/>
         <property name="username" value="ttknp"/>

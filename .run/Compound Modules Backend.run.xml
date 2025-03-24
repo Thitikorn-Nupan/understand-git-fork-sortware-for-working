@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Compound Modules Backend" type="CompoundRunConfigurationType">
+    <toRun name="TestSpringBootAppApplication" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>
