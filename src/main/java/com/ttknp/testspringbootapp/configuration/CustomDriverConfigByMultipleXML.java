@@ -1,7 +1,6 @@
 /*
 package com.ttknp.testspringbootapp.configuration;
 
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 

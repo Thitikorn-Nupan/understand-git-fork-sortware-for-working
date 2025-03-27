@@ -1,7 +1,11 @@
 package com.ttknp.testspringbootapp;
 
+import com.fasterxml.jackson.databind.annotation.NoClass;
+import com.ttknp.testspringbootapp.entities.common.ModelCommon;
 import com.ttknp.testspringbootapp.repositories.StudentRepo;
 import com.ttknp.testspringbootapp.repositories.UserDetailRepo;
+import com.ttknp.testspringbootapp.services.StudentService;
+import com.ttknp.testspringbootapp.services.UserDetailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +31,7 @@ import java.lang.management.ManagementFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -42,6 +47,9 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
     private UserDetailRepo userDetailRepo;
     private StudentRepo studentRepo;
 
+    private StudentService studentService;
+    private UserDetailService userDetailService;
+    /*
     @Autowired
     // custom connect dbs with java code
     // multiple databases
@@ -54,15 +62,14 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
         this.userDetailRepo = userDetailRepo;
         this.studentRepo = studentRepo;
     }
-    /*
-    @Autowired
-    public TestSpringBootAppApplication(CustomDriverConfigByXML customDriverConfigByXML) {
-        this.customDriverConfigByXML = customDriverConfigByXML;
-    }
     */
+    @Autowired
+    public TestSpringBootAppApplication(StudentService studentService,UserDetailService userDetailService) {
+        this.studentService = studentService;
+        this.userDetailService = userDetailService;
+    }
 
     // ** private static final Logger log = LoggerFactory.getLogger(TestSpringBootAppApplication.class);
-
     /**
      * @GetMapping
      * @ResponseBody
@@ -98,7 +105,6 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
     }*/
     @Override
     public void run(String... args) throws Exception {
-
         /*
         // work
         userDetailRepo.findAll().forEach((user) -> {
@@ -109,11 +115,9 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
             log.info("Student.id: {}" , student.id);
         });
         */
-
         /**
-         * you have to specify database name on url if table you work it's not default schema
-         * manual queries
-         */
+        ** you have to specify database name on url if table you work it's not default schema
+        ** manual queries
         String sql = "select * from TTKNP.A_APP.USERS_DETAIL;";
         jdbcTemplateSQL.query(sql, new RowMapper<Object>() {
             @Override
@@ -130,6 +134,18 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
                 return null;
             }
         });
+        */
+
+        List<ModelCommon<Integer, String, Short, NoClass, NoClass,NoClass>> students = studentService.getAllStudents();
+        for (int i = 0; i < students.size(); i++) {
+            log.info("Student " + i + ": " + students.get(i));
+        }
+
+        List<ModelCommon<Integer,String,String, Integer ,String,String>> userDetails = userDetailService.getAllUserDetails();
+        for (int i = 0; i < userDetails.size(); i++) {
+            log.info("User Detail " + i + ": " + userDetails.get(i));
+        }
+
     }
 
     // ***
