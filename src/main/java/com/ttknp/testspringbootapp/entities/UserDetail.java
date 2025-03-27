@@ -4,9 +4,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 // @Table() in JDBC works kinda same JPA
 
-@Table(name = "users_detail",schema = "A_APP")
+// @Table(name = "users_detail",schema = "A_APP")
 public class UserDetail {
-    @Id
+    // @Id
     public Integer id;
     public String firstname;
     public String lastname;
