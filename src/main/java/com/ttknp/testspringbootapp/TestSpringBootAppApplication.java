@@ -1,11 +1,15 @@
 package com.ttknp.testspringbootapp;
 
 import com.fasterxml.jackson.databind.annotation.NoClass;
+import com.ttknp.testspringbootapp.entities.Student;
+import com.ttknp.testspringbootapp.entities.UserDetail;
 import com.ttknp.testspringbootapp.entities.common.ModelCommon;
 import com.ttknp.testspringbootapp.repositories.StudentRepo;
 import com.ttknp.testspringbootapp.repositories.UserDetailRepo;
 import com.ttknp.testspringbootapp.services.StudentService;
+import com.ttknp.testspringbootapp.services.StudentServiceCommon;
 import com.ttknp.testspringbootapp.services.UserDetailService;
+import com.ttknp.testspringbootapp.services.UserDetailServiceCommon;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,11 +48,15 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
 
     private JdbcTemplate jdbcTemplateSQL;
     private JdbcTemplate jdbcTemplateMySQL;
+
     private UserDetailRepo userDetailRepo;
     private StudentRepo studentRepo;
 
     private StudentService studentService;
     private UserDetailService userDetailService;
+
+    private StudentServiceCommon studentServiceCommon;
+    private UserDetailServiceCommon userDetailServiceCommon;
     /*
     @Autowired
     // custom connect dbs with java code
@@ -64,9 +72,9 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
     }
     */
     @Autowired
-    public TestSpringBootAppApplication(StudentService studentService,UserDetailService userDetailService) {
-        this.studentService = studentService;
-        this.userDetailService = userDetailService;
+    public TestSpringBootAppApplication(StudentServiceCommon studentServiceCommon, UserDetailServiceCommon userDetailServiceCommon) { // StudentService studentService,UserDetailService userDetailService
+        this.studentServiceCommon = studentServiceCommon;
+        this.userDetailServiceCommon = userDetailServiceCommon;
     }
 
     // ** private static final Logger log = LoggerFactory.getLogger(TestSpringBootAppApplication.class);
@@ -115,6 +123,7 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
             log.info("Student.id: {}" , student.id);
         });
         */
+        
         /**
         ** you have to specify database name on url if table you work it's not default schema
         ** manual queries
@@ -136,6 +145,7 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
         });
         */
 
+        /**
         List<ModelCommon<Integer, String, Short, NoClass, NoClass,NoClass>> students = studentService.getAllStudents();
         for (int i = 0; i < students.size(); i++) {
             log.info("Student " + i + ": " + students.get(i));
@@ -144,6 +154,18 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
         List<ModelCommon<Integer,String,String, Integer ,String,String>> userDetails = userDetailService.getAllUserDetails();
         for (int i = 0; i < userDetails.size(); i++) {
             log.info("User Detail " + i + ": " + userDetails.get(i));
+        }
+        */
+
+
+        List<UserDetail> userDetails = userDetailServiceCommon.getAllModels();
+        for (int i = 0; i < userDetails.size(); i++) {
+            log.info("User Detail " + i + ": " + userDetails.get(i));
+        }
+
+        List<Student> students = studentServiceCommon.getAllModels();
+        for (int i = 0; i < students.size(); i++) {
+            log.info("Student " + i + ": " + students.get(i));
         }
 
     }
