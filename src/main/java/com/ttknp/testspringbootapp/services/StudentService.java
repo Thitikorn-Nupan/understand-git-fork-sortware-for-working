@@ -16,13 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Service
+// ** @Service
 public class StudentService implements RowMapper<ModelCommon<Integer,String,Short, NoClass,NoClass,NoClass>> {
 
     private JdbcTemplate jdbcTemplateMySQL;
     private List<ModelCommon<Integer,String,Short, NoClass,NoClass,NoClass>> students;
 
-    @Autowired
+    // ** @Autowired
     // custom connect dbs with java code
     public StudentService(@Qualifier("dataSourceMySQL") DataSource dataSourceSQL) {
         this.jdbcTemplateMySQL = new JdbcTemplate(dataSourceSQL);
