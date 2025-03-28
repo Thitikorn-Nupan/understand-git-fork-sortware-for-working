@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Service
+// ** @Service
 public class UserDetailService implements RowMapper<ModelCommon<Integer,String,String, Integer ,String,String>> {
 
     private JdbcTemplate jdbcTemplateSQL;
     private List<ModelCommon<Integer,String,String, Integer,String,String>> userDetails;
 
-    @Autowired
+    // ** @Autowired
     // custom connect dbs with java code
     public UserDetailService(@Qualifier("dataSourceSQL") DataSource dataSourceSQL) {
         this.jdbcTemplateSQL = new JdbcTemplate(dataSourceSQL);
