@@ -163,10 +163,14 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
             log.info("User Detail " + i + ": " + userDetails.get(i));
         }
 
+        userDetailServiceCommon.removeModelByPk(1);
+
         List<Student> students = studentServiceCommon.getAllModels();
         for (int i = 0; i < students.size(); i++) {
             log.info("Student " + i + ": " + students.get(i));
         }
+
+        studentServiceCommon.removeModelByPk("A0001");
 
     }
 
@@ -210,10 +214,8 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
     }
 
     public static void main(String[] args) throws SQLException {
-        // Run by auto config have to use @ImportResource() annotation
-        // SpringApplication.run(TestSpringBootAppApplication.class, args);
-        // Custom runner
-        startSpringBootWithoutImportResourceAnnotation(TestSpringBootAppApplication.class, args);
+        // SpringApplication.run(TestSpringBootAppApplication.class, args); // Run by auto config have to use @ImportResource() annotation
+        startSpringBootWithoutImportResourceAnnotation(TestSpringBootAppApplication.class, args); // Custom runner
     }
 
 }

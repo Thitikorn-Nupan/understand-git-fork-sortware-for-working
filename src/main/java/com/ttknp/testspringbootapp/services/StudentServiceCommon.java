@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.NoClass;
 import com.ttknp.testspringbootapp.entities.Student;
 import com.ttknp.testspringbootapp.entities.common.ModelCommon;
 import com.ttknp.testspringbootapp.services.common.ModelServiceCommon;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class StudentServiceCommon extends ModelServiceCommon<Student> {
 
@@ -37,6 +39,24 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
     }
 
     @Override
+    public <U> void removeModelByPk(U modelCode) { // U can be any type
+        log.info("Removing model with id {}", modelCode);
+        String sql = "delete from TTKNP.students where code = ?;";
+        int rowAffected =jdbcTemplateMySQL.update(sql, modelCode); // async method
+        if (rowAffected > 0) {
+            log.debug("Successfully removed model with code {}", modelCode);
+        } else {
+            log.debug("Failed to remove model with code {}", modelCode);
+        }
+    }
+
+    @Override
+    public <U> Student removeModelByPkAndAuth(U modelPk) {
+        return null;
+    }
+
+
+    @Override
     public Student mapRow(ResultSet rs, int rowNum) throws SQLException {
         Student student = new Student();
         student.id = rs.getInt("id");
@@ -45,4 +65,6 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
         students.add(student);
         return student;
     }
+
+
 }

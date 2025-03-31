@@ -15,12 +15,9 @@ public abstract class ModelServiceCommon <T> implements RowMapper<T> {
     // add methods abs
     // add methods
     // then extends
-
     private String sqlScriptDirOnRoot = "sql/";
 
-
     public abstract List<T> getAllModels() ;
-
 
     public void loadScript(String fileName, DataSource dataSource) {
         String fullSqlScriptDirOnRoot = sqlScriptDirOnRoot + fileName;
@@ -30,5 +27,10 @@ public abstract class ModelServiceCommon <T> implements RowMapper<T> {
         populator.addScripts(new ClassPathResource(fullSqlScriptDirOnRoot)); // ClassPathResource class it looks to src of this module
         populator.execute(Objects.requireNonNull(dataSource)); // by default it'll log queries result on console
     }
+
+    // generic with method void
+    public abstract <U> void removeModelByPk(U modelPk);
+    // generic with method return T type
+    public abstract <U> T removeModelByPkAndAuth(U modelPk);
 
 }
