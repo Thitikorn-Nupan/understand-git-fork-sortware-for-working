@@ -28,8 +28,15 @@ public abstract class ModelServiceCommon <T> implements RowMapper<T> {
         populator.execute(Objects.requireNonNull(dataSource)); // by default it'll log queries result on console
     }
 
-    // generic with method void
+    // generic with method void ** note U can be any types
+    // *** <U> is meaning type ex, <U> void test(U key),<U,U2,U3> void test(U key,U2 key2,U3 key3)
+    // ex, removeModelByPk("1") removeModelByPk(1) , ...(true) , ...
     public abstract <U> void removeModelByPk(U modelPk);
+    // *** but if you specify parameter like U ...key it can be any types
+    // ex , removeModelByManyPkManyType(1,"0",true,new String(),...)
+    public abstract <U> void removeModelByManyPkManyType(U ...modelPk);
+    public abstract <U,U2,U3> void removeModelBy3Pk(U modelPk,U2 modelPk2,U3 modelPk3);
+
     // generic with method return T type
     public abstract <U> T removeModelByPkAndAuth(U modelPk);
 
