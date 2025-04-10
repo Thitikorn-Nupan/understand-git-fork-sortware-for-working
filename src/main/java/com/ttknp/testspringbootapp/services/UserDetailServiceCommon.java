@@ -50,6 +50,26 @@ public class UserDetailServiceCommon extends ModelServiceCommon<UserDetail> {
     }
 
     @Override
+    public <U> void removeModelByManyPkManyType(U... modelPk) {
+        for (U modelPkHold : modelPk) {
+            log.info("Removing model with modelPkHold {}", modelPkHold);
+        }
+    }
+
+    @Override
+    public <U, U2, U3> void removeModelBy3Pk(U modelPk, U2 modelPk2, U3 modelPk3) {
+        // 1, 'Alex', 'Ryder', : id,firstname , lastname
+        log.info("Removing model with id {}", modelPk);
+        String sql = "delete from A_APP.USERS_DETAIL where ID = ? AND firstname = ? AND lastname = ?;";
+        int rowAffected =jdbcTemplateSQL.update(sql, modelPk,modelPk2,modelPk3); // async method
+        if (rowAffected > 0) {
+            log.debug("Successfully removed model with id {} firstname {} , lastname {}", modelPk,modelPk2,modelPk3);
+        } else {
+            log.debug("Failed to remove model with id {} firstname {} , lastname {}", modelPk,modelPk2,modelPk3);
+        }
+    }
+
+    @Override
     public <U> UserDetail removeModelByPkAndAuth(U modelPk) {
         return null;
     }
