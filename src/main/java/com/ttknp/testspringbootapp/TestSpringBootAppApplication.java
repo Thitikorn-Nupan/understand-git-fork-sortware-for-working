@@ -1,18 +1,11 @@
 package com.ttknp.testspringbootapp;
 
-import com.fasterxml.jackson.databind.annotation.NoClass;
 import com.ttknp.testspringbootapp.entities.Student;
 import com.ttknp.testspringbootapp.entities.UserDetail;
-import com.ttknp.testspringbootapp.entities.common.ModelCommon;
-import com.ttknp.testspringbootapp.repositories.StudentRepo;
-import com.ttknp.testspringbootapp.repositories.UserDetailRepo;
-import com.ttknp.testspringbootapp.services.StudentService;
 import com.ttknp.testspringbootapp.services.StudentServiceCommon;
-import com.ttknp.testspringbootapp.services.UserDetailService;
 import com.ttknp.testspringbootapp.services.UserDetailServiceCommon;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,16 +16,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
 import java.lang.management.ManagementFactory;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
@@ -45,7 +34,7 @@ import java.util.Set;
 // @Component
 @Configuration
 public class TestSpringBootAppApplication implements CommandLineRunner {
-
+    /*
     private JdbcTemplate jdbcTemplateSQL;
     private JdbcTemplate jdbcTemplateMySQL;
 
@@ -54,7 +43,7 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
 
     private StudentService studentService;
     private UserDetailService userDetailService;
-
+    */
     private StudentServiceCommon studentServiceCommon;
     private UserDetailServiceCommon userDetailServiceCommon;
     /*
@@ -157,13 +146,14 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
         }
         */
 
-
         List<UserDetail> userDetails = userDetailServiceCommon.getAllModels();
         for (int i = 0; i < userDetails.size(); i++) {
-            log.info("User Detail " + i + ": " + userDetails.get(i));
+            log.info("User Detail i : {} user : {} ", i, userDetails.get(i));
         }
 
         userDetailServiceCommon.removeModelByPk(1);
+        userDetailServiceCommon.removeModelBy3Pk(2,"Jack","Ryder");
+        userDetailServiceCommon.removeModelByManyPkManyType(3,"Adam","Ryder",30,"Adam@hotmail.com","064786387");
 
         List<Student> students = studentServiceCommon.getAllModels();
         for (int i = 0; i < students.size(); i++) {
@@ -171,6 +161,7 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
         }
 
         studentServiceCommon.removeModelByPk("A0001");
+        studentServiceCommon.removeModelBy3Pk("A0002" , "Bob Johnson" , 22);
 
     }
 

@@ -51,6 +51,23 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
     }
 
     @Override
+    public <U> void removeModelByManyPkManyType(U... modelPk) {
+
+    }
+
+    @Override
+    public <U, U2, U3> void removeModelBy3Pk(U modelPk, U2 modelPk2, U3 modelPk3) {
+        // 'A0002' , 'Bob Johnson' , 22
+        String sql = "delete from TTKNP.students where code = ? AND fullname = ? AND age = ?;";
+        int rowAffected = jdbcTemplateMySQL.update(sql, modelPk,modelPk2,modelPk3); // async method
+        if (rowAffected > 0) {
+            log.debug("Successfully removed model with code {} fullname {} age {}", modelPk,modelPk2,modelPk3);
+        } else {
+            log.debug("Failed to remove model with code {} fullname {} age {}", modelPk,modelPk2,modelPk3);
+        }
+    }
+
+    @Override
     public <U> Student removeModelByPkAndAuth(U modelPk) {
         return null;
     }
