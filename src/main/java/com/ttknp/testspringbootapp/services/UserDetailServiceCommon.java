@@ -31,8 +31,19 @@ public class UserDetailServiceCommon extends ModelServiceCommon<UserDetail> {
 
     @Override
     public List<UserDetail> getAllModels() {
+        userDetails.clear();
         this.loadScript("reload-sql-user-details-table.sql",jdbcTemplateSQL.getDataSource());
         String sql = "select * from TTKNP.A_APP.USERS_DETAIL;";
+        jdbcTemplateSQL.query(sql, this); // async method
+        return userDetails;
+    }
+
+    @Override
+    public <U,U2> List<UserDetail> getAllModelsSortBy(U modelKey , U2 modelKey2)  {
+        userDetails.clear();
+        // run this script before called this method
+        this.loadScript("reload-sql-user-details-table.sql",jdbcTemplateSQL.getDataSource());
+        String sql = "select * from A_APP.USERS_DETAIL order by %s %s;".formatted(modelKey, modelKey2);
         jdbcTemplateSQL.query(sql, this); // async method
         return userDetails;
     }

@@ -2,11 +2,11 @@ package com.ttknp.testspringbootapp;
 
 import com.ttknp.testspringbootapp.entities.Student;
 import com.ttknp.testspringbootapp.entities.UserDetail;
+import com.ttknp.testspringbootapp.entities.common.RequestResponseDataTableCommon;
 import com.ttknp.testspringbootapp.services.StudentServiceCommon;
 import com.ttknp.testspringbootapp.services.UserDetailServiceCommon;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
@@ -16,9 +16,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
 import java.lang.management.ManagementFactory;
@@ -33,7 +31,7 @@ import java.util.Set;
 @RestController
 // @Component
 @Configuration
-public class TestSpringBootAppApplication implements CommandLineRunner {
+public class TestSpringBootAppApplication  { // implements CommandLineRunner
     /*
     private JdbcTemplate jdbcTemplateSQL;
     private JdbcTemplate jdbcTemplateMySQL;
@@ -95,12 +93,37 @@ public class TestSpringBootAppApplication implements CommandLineRunner {
     }
 
 
+
+    @PostMapping(value = "/students")
+    public RequestResponseDataTableCommon.Response< Student > retrieveAllStudents(@RequestBody RequestResponseDataTableCommon.Request request) {
+        log.info("req {}", request);
+        // Integer recordsExpected, Request request, String error, List<T> data
+        // Integer recordsExpected = request.getMaxLength();
+        RequestResponseDataTableCommon.OrderBy orderBy = request.getOrderBy();
+        List<Student> students = studentServiceCommon.getAllModelsSortBy(orderBy.getName(),orderBy.getDirection());
+        String error = "";
+        // log.info("students size {} ",students.size());
+        return new RequestResponseDataTableCommon.Response<Student>(request,error,students);
+    }
+
+    @PostMapping(value = "/users")
+    public RequestResponseDataTableCommon.Response< UserDetail > retrieveAllUsers(@RequestBody RequestResponseDataTableCommon.Request request) {
+        log.info("req {}", request);
+        // Integer recordsExpected, Request request, String error, List<T> data
+        // Integer recordsExpected = request.getMaxLength();
+        RequestResponseDataTableCommon.OrderBy orderBy = request.getOrderBy();
+        List<UserDetail> userDetails = userDetailServiceCommon.getAllModelsSortBy(orderBy.getName(),orderBy.getDirection());
+        String error = "";
+        return new RequestResponseDataTableCommon.Response<UserDetail>(request,error,userDetails);
+    }
+
+
     /*public static void main(String[] args) {
         DataSource dataSource = getDataSourceFromXml();
         // Use the dataSource
         System.out.println(dataSource);
     }*/
-    @Override
+    // @Override
     public void run(String... args) throws Exception {
         /*
         // work

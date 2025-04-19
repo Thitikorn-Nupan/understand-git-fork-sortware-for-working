@@ -12,12 +12,12 @@ import java.util.Objects;
 
 @Slf4j
 public abstract class ModelServiceCommon <T> implements RowMapper<T> {
-    // add methods abs
-    // add methods
-    // then extends
+
     private String sqlScriptDirOnRoot = "sql/";
 
     public abstract List<T> getAllModels() ;
+
+    public abstract <U,U2> List<T> getAllModelsSortBy(U modelKey,U2 modelKey2) ;
 
     public void loadScript(String fileName, DataSource dataSource) {
         String fullSqlScriptDirOnRoot = sqlScriptDirOnRoot + fileName;
@@ -33,10 +33,9 @@ public abstract class ModelServiceCommon <T> implements RowMapper<T> {
     // ex, removeModelByPk("1") removeModelByPk(1) , ...(true) , ...
     public abstract <U> void removeModelByPk(U modelPk);
     // *** but if you specify parameter like U ...key it can be any types
-    // ex , removeModelByManyPkManyType(1,"0",true,new String(),...)
+    // ex , removeModelByManyPkManyType(1,"0",true,new String(),...) ** you have to use looping to get each modelPk
     public abstract <U> void removeModelByManyPkManyType(U ...modelPk);
     public abstract <U,U2,U3> void removeModelBy3Pk(U modelPk,U2 modelPk2,U3 modelPk3);
-
     // generic with method return T type
     public abstract <U> T removeModelByPkAndAuth(U modelPk);
 

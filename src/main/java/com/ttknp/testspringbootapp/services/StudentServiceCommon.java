@@ -31,9 +31,20 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
 
     @Override
     public List<Student> getAllModels() {
+        students.clear();
         // run this script before called this method
         this.loadScript("reload-mysql-students-table.sql",jdbcTemplateMySQL.getDataSource());
         String sql = "select * from TTKNP.students;";
+        jdbcTemplateMySQL.query(sql, this); // async method
+        return students;
+    }
+
+    @Override
+    public <U,U2> List<Student> getAllModelsSortBy(U modelKey , U2 modelKey2) {
+        students.clear();
+        // run this script before called this method
+        this.loadScript("reload-mysql-students-table.sql",jdbcTemplateMySQL.getDataSource());
+        String sql = "select * from TTKNP.students order by %s %s;".formatted(modelKey, modelKey2);
         jdbcTemplateMySQL.query(sql, this); // async method
         return students;
     }
