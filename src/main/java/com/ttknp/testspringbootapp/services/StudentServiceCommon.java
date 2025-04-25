@@ -40,7 +40,7 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
     }
 
     @Override
-    public <U,U2> List<Student> getAllModelsSortBy(U modelKey , U2 modelKey2) {
+    public <U,U2> List<Student> getAllModelsSortBy(U modelKey , U2 modelKey2) { // it's only be strings
         students.clear();
         // run this script before called this method
         this.loadScript("reload-mysql-students-table.sql",jdbcTemplateMySQL.getDataSource());
@@ -62,11 +62,6 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
     }
 
     @Override
-    public <U> void removeModelByManyPkManyType(U... modelPk) {
-
-    }
-
-    @Override
     public <U, U2, U3> void removeModelBy3Pk(U modelPk, U2 modelPk2, U3 modelPk3) {
         // 'A0002' , 'Bob Johnson' , 22
         String sql = "delete from TTKNP.students where code = ? AND fullname = ? AND age = ?;";
@@ -77,6 +72,10 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
             log.debug("Failed to remove model with code {} fullname {} age {}", modelPk,modelPk2,modelPk3);
         }
     }
+
+
+    @Override
+    public <U> void removeModelByManyPkManyType(U... modelPk) {}
 
     @Override
     public <U> Student removeModelByPkAndAuth(U modelPk) {
@@ -93,6 +92,5 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
         students.add(student);
         return student;
     }
-
 
 }

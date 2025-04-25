@@ -7,6 +7,7 @@ import com.ttknp.testspringbootapp.services.StudentServiceCommon;
 import com.ttknp.testspringbootapp.services.UserDetailServiceCommon;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -31,7 +33,7 @@ import java.util.Set;
 @RestController
 // @Component
 @Configuration
-public class TestSpringBootAppApplication  { // implements CommandLineRunner
+public class TestSpringBootAppApplication implements CommandLineRunner { // implements CommandLineRunner
     /*
     private JdbcTemplate jdbcTemplateSQL;
     private JdbcTemplate jdbcTemplateMySQL;
@@ -42,8 +44,8 @@ public class TestSpringBootAppApplication  { // implements CommandLineRunner
     private StudentService studentService;
     private UserDetailService userDetailService;
     */
-    private StudentServiceCommon studentServiceCommon;
-    private UserDetailServiceCommon userDetailServiceCommon;
+    private final StudentServiceCommon studentServiceCommon;
+    private final UserDetailServiceCommon userDetailServiceCommon;
     /*
     @Autowired
     // custom connect dbs with java code
@@ -93,39 +95,46 @@ public class TestSpringBootAppApplication  { // implements CommandLineRunner
     }
 
 
-
     @PostMapping(value = "/students")
     public RequestResponseDataTableCommon.Response< Student > retrieveAllStudents(@RequestBody RequestResponseDataTableCommon.Request request) {
         log.info("req {}", request);
-        // Integer recordsExpected, Request request, String error, List<T> data
-        // Integer recordsExpected = request.getMaxLength();
         RequestResponseDataTableCommon.OrderBy orderBy = request.getOrderBy();
         List<Student> students = studentServiceCommon.getAllModelsSortBy(orderBy.getName(),orderBy.getDirection());
         String error = "";
-        // log.info("students size {} ",students.size());
         return new RequestResponseDataTableCommon.Response<Student>(request,error,students);
     }
 
     @PostMapping(value = "/users")
     public RequestResponseDataTableCommon.Response< UserDetail > retrieveAllUsers(@RequestBody RequestResponseDataTableCommon.Request request) {
         log.info("req {}", request);
-        // Integer recordsExpected, Request request, String error, List<T> data
-        // Integer recordsExpected = request.getMaxLength();
-        RequestResponseDataTableCommon.OrderBy orderBy = request.getOrderBy();
+        // condition one line same js language <condition> ? <do true> : <do false>
+        // check again
+        RequestResponseDataTableCommon.OrderBy orderBy = request.getOrderBy().getName().equals("desc") || request.getOrderBy().getName().equals("asc") ? request.getOrderBy() : new RequestResponseDataTableCommon.OrderBy("id","desc");
         List<UserDetail> userDetails = userDetailServiceCommon.getAllModelsSortBy(orderBy.getName(),orderBy.getDirection());
         String error = "";
         return new RequestResponseDataTableCommon.Response<UserDetail>(request,error,userDetails);
     }
 
 
-    /*public static void main(String[] args) {
+    /*
+    public static void main(String[] args) {
         DataSource dataSource = getDataSourceFromXml();
         // Use the dataSource
         System.out.println(dataSource);
-    }*/
-    // @Override
+    }
+    */
+
+    @Override
     public void run(String... args) throws Exception {
-        /*
+        testBusinessService();
+    }
+
+    private void testBusinessService2() throws Exception {
+        // this.userDetailServiceCommon.addModelTest();
+    }
+
+    private void testBusinessService() {
+        /**
         // work
         userDetailRepo.findAll().forEach((user) -> {
             log.info("User.id: {}" , user.id);
@@ -135,7 +144,7 @@ public class TestSpringBootAppApplication  { // implements CommandLineRunner
             log.info("Student.id: {}" , student.id);
         });
         */
-        
+
         /**
         ** you have to specify database name on url if table you work it's not default schema
         ** manual queries
@@ -174,23 +183,21 @@ public class TestSpringBootAppApplication  { // implements CommandLineRunner
             log.info("User Detail i : {} user : {} ", i, userDetails.get(i));
         }
 
-        userDetailServiceCommon.removeModelByPk(1);
-        userDetailServiceCommon.removeModelBy3Pk(2,"Jack","Ryder");
-        userDetailServiceCommon.removeModelByManyPkManyType(3,"Adam","Ryder",30,"Adam@hotmail.com","064786387");
+        userDetailServiceCommon.removeModelByPk(100);
+        // userDetailServiceCommon.removeModelBy3Pk(2,"Jack","Ryder");
+        // userDetailServiceCommon.removeModelByManyPkManyType(3,"Adam","Ryder",30,"Adam@hotmail.com","064786387");
 
         List<Student> students = studentServiceCommon.getAllModels();
         for (int i = 0; i < students.size(); i++) {
             log.info("Student " + i + ": " + students.get(i));
         }
 
-        studentServiceCommon.removeModelByPk("A0001");
-        studentServiceCommon.removeModelBy3Pk("A0002" , "Bob Johnson" , 22);
+        // studentServiceCommon.removeModelByPk("A0001");
+        // studentServiceCommon.removeModelBy3Pk("A0002" , "Bob Johnson" , 22);
 
     }
 
-    // ***
     // get connection by retrieved an DriverManagerDataSource bean on xml *** manual
-    // ***
     public static void getDataSourceFromXmlAndTestConfig() throws SQLException {
         ApplicationContext context = new ClassPathXmlApplicationContext("xml/spring-context.xml");
         DataSource dataSource = (DataSource) context.getBean("dataSourceSQL");
