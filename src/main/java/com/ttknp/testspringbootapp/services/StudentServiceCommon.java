@@ -11,9 +11,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -32,8 +34,13 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
     @Override
     public List<Student> getAllModels() {
         students.clear();
-        // run this script before called this method
-        this.loadScript("reload-mysql-students-table.sql",jdbcTemplateMySQL.getDataSource());
+        try {
+            // jdbcTemplateMySQL.execute("truncate table TTKNP.students"); // only truncate table
+            loadScript("truncate-mysql-students-table.sql", jdbcTemplateMySQL.getDataSource()); // truncate table and clear auto increment
+            loadScriptAndPassParamsForGetAllModels("reload-mysql-students-table-params.sql");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         String sql = "select * from TTKNP.students;";
         jdbcTemplateMySQL.query(sql, this); // async method
         return students;
@@ -74,6 +81,7 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
     }
 
 
+
     @Override
     public <U> void removeModelByManyPkManyType(U... modelPk) {}
 
@@ -81,7 +89,6 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
     public <U> Student removeModelByPkAndAuth(U modelPk) {
         return null;
     }
-
 
     @Override
     public Student mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -91,6 +98,15 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
         student.age = rs.getShort("age");
         students.add(student);
         return student;
+    }
+
+    private void loadScriptAndPassParamsForGetAllModels(String fileName) throws IOException, SQLException {
+        HashMap<String,String> params = new HashMap();
+        params.put("{ID}","3");
+        params.put("{FULLNAME}","'Jacky Jacky'");
+        params.put("{AGE}","23");
+        params.put("{CODE}","'A0003'");
+        this.loadScript(this.getClass(),fileName,jdbcTemplateMySQL,params);
     }
 
 }

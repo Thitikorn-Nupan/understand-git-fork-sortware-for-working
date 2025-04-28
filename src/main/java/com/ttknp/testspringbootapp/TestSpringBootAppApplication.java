@@ -115,6 +115,11 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
         return new RequestResponseDataTableCommon.Response<UserDetail>(request,error,userDetails);
     }
 
+    // if you set a void method by default it returns status 200 body as null
+    @PutMapping(value = "/users/delete")
+    public void removeUser(@RequestParam(required = true) Long id) {
+        userDetailServiceCommon.removeModelByPk(id);
+    }
 
     /*
     public static void main(String[] args) {
@@ -129,9 +134,9 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
         testBusinessService();
     }
 
-    private void testBusinessService2() throws Exception {
+    /** private void testBusinessService2() throws Exception {
         // this.userDetailServiceCommon.addModelTest();
-    }
+    }*/
 
     private void testBusinessService() {
         /**
@@ -180,16 +185,17 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
 
         List<UserDetail> userDetails = userDetailServiceCommon.getAllModels();
         for (int i = 0; i < userDetails.size(); i++) {
-            log.info("User Detail i : {} user : {} ", i, userDetails.get(i));
+            log.info("User Detail {} : {} ", i, userDetails.get(i));
         }
 
-        userDetailServiceCommon.removeModelByPk(100);
+        userDetailServiceCommon.removeModelByPk(1); // remove and backup
         // userDetailServiceCommon.removeModelBy3Pk(2,"Jack","Ryder");
         // userDetailServiceCommon.removeModelByManyPkManyType(3,"Adam","Ryder",30,"Adam@hotmail.com","064786387");
 
         List<Student> students = studentServiceCommon.getAllModels();
+
         for (int i = 0; i < students.size(); i++) {
-            log.info("Student " + i + ": " + students.get(i));
+            log.info("Student {}: {}", i, students.get(i));
         }
 
         // studentServiceCommon.removeModelByPk("A0001");

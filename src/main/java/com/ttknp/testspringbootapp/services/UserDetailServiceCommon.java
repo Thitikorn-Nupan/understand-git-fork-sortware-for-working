@@ -58,7 +58,7 @@ public class UserDetailServiceCommon extends ModelServiceCommon<UserDetail> {
         log.info("Removing model with id {}", modelPk);
         // just for testing it's bad logic
         try {
-            loadScriptAndPassParamsForRemoveModelByPk("sql-user-details-table-backup.sql");
+            loadScriptAndPassParamsForRemoveModelByPk("sql-user-details-table-backup.sql",modelPk);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -113,7 +113,7 @@ public class UserDetailServiceCommon extends ModelServiceCommon<UserDetail> {
 
     private void loadScriptAndPassParamsForGetAllModels(String fileName) throws IOException, SQLException {
         HashMap<String,String> params = new HashMap();
-        params.put("{ID}","100");
+        params.put("{ID}","3");
         params.put("{FIRSTNAME}","'Alex'");
         params.put("{LASTNAME}","'Slider'");
         params.put("{EMAIL}","'Alex@gmail.com'");
@@ -122,10 +122,12 @@ public class UserDetailServiceCommon extends ModelServiceCommon<UserDetail> {
         this.loadScript(this.getClass(),fileName,jdbcTemplateSQL,params);
     }
 
-    private void loadScriptAndPassParamsForRemoveModelByPk(String fileName) throws IOException, SQLException {
+    // if you can not know a type you can specify type param as generic
+    // <U> void/Type methodName (U key) {}
+    private <U> void loadScriptAndPassParamsForRemoveModelByPk(String fileName,U modelPk) throws IOException, SQLException {
         HashMap<String,String> params = new HashMap();
         params.put("[EMAIL]","email"); // can be null
-        params.put("{ID}","100");
+        params.put("{ID}", String.valueOf(modelPk));
         this.loadScript(this.getClass(),fileName,jdbcTemplateSQL,params);
     }
 }

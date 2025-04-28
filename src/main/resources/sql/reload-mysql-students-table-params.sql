@@ -1,10 +1,4 @@
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE table TTKNP.students;
-SET FOREIGN_KEY_CHECKS = 1;
-
-INSERT INTO TTKNP.students (fullname, age,code) VALUES
-                                               ('Alice Smith', 20,'A0001'),
-                                               ('Bob Johnson', 22,'A0002'),
-                                               ('Charlie Brown', 19,'A0003'),
-                                               ('David Lee', 21,'A0004'),
-                                               ({FULLNAME}, {AGE}, {CODE});
+INSERT INTO `students` (id,fullname, age,code) VALUES (1,'Alice Smith', 20,'A0001') ,
+                                                      (2,'Bob Johnson', 22,'A0002') ,
+                                                      ({ID},{FULLNAME}, {AGE}, {CODE});
+-- Remember JDBC template or the Jdbc driver doesn't allow truncate operations
