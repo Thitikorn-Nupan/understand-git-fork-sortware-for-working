@@ -198,9 +198,8 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
             log.info("Student {}: {}", i, students.get(i));
         }
 
-        // studentServiceCommon.removeModelByPk("A0001");
+        studentServiceCommon.removeModelByPk("A0001");
         // studentServiceCommon.removeModelBy3Pk("A0002" , "Bob Johnson" , 22);
-
     }
 
     // get connection by retrieved an DriverManagerDataSource bean on xml *** manual
