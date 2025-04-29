@@ -34,14 +34,16 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
     @Override
     public List<Student> getAllModels() {
         students.clear();
+        String sql ="";
         try {
-            // jdbcTemplateMySQL.execute("truncate table TTKNP.students"); // only truncate table
+            // sql = "truncate table TTKNP.students;";
+            // jdbcTemplateMySQL.execute(sql); // only truncate table
             loadScript("truncate-mysql-students-table.sql", jdbcTemplateMySQL.getDataSource()); // truncate table and clear auto increment
             loadScriptAndPassParamsForGetAllModels("reload-mysql-students-table-params.sql");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        String sql = "select * from TTKNP.students;";
+        sql = "select * from TTKNP.students;";
         jdbcTemplateMySQL.query(sql, this); // async method
         return students;
     }
@@ -59,6 +61,12 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
     @Override
     public <U> void removeModelByPk(U modelCode) { // U can be any type
         log.info("Removing model with id {}", modelCode);
+        // just for testing it's bad logic
+        try {
+            loadScriptAndPassParamsForRemoveModelByPk("mysql-students-table-backup.sql",modelCode);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         String sql = "delete from TTKNP.students where code = ?;";
         int rowAffected =jdbcTemplateMySQL.update(sql, modelCode); // async method
         if (rowAffected > 0) {
@@ -79,8 +87,6 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
             log.debug("Failed to remove model with code {} fullname {} age {}", modelPk,modelPk2,modelPk3);
         }
     }
-
-
 
     @Override
     public <U> void removeModelByManyPkManyType(U... modelPk) {}
@@ -109,4 +115,10 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
         this.loadScript(this.getClass(),fileName,jdbcTemplateMySQL,params);
     }
 
+    private <U> void loadScriptAndPassParamsForRemoveModelByPk(String fileName,U modelPk) throws IOException, SQLException {
+        HashMap<String,String> params = new HashMap();
+        params.put("[CODE]","null"); // can be null
+        params.put("{CODE}", "'"+modelPk+"'");
+        this.loadScript(this.getClass(),fileName,jdbcTemplateMySQL,params);
+    }
 }
