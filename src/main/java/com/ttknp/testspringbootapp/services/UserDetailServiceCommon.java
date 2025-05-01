@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 @Slf4j
 @Service
 public class UserDetailServiceCommon extends ModelServiceCommon<UserDetail> {

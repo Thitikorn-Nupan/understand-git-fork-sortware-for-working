@@ -22,8 +22,8 @@ import java.util.List;
 @Service
 public class StudentServiceCommon extends ModelServiceCommon<Student> {
 
-    private JdbcTemplate jdbcTemplateMySQL;
-    private List<Student> students;
+    private final JdbcTemplate jdbcTemplateMySQL;
+    private final List<Student> students;
 
     @Autowired
     public StudentServiceCommon(@Qualifier("dataSourceMySQL") DataSource dataSourceSQL) {
@@ -117,7 +117,8 @@ public class StudentServiceCommon extends ModelServiceCommon<Student> {
 
     private <U> void loadScriptAndPassParamsForRemoveModelByPk(String fileName,U modelPk) throws IOException, SQLException {
         HashMap<String,String> params = new HashMap();
-        params.put("[CODE]","null"); // can be null
+        // params.put("[CODE]","null"); // can be null
+        params.put("[CODE]","code");
         params.put("{CODE}", "'"+modelPk+"'");
         this.loadScript(this.getClass(),fileName,jdbcTemplateMySQL,params);
     }

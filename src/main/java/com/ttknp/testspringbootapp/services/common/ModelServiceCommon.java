@@ -26,6 +26,7 @@ public abstract class ModelServiceCommon <T> implements RowMapper<T> {
     public abstract <U,U2> List<T> getAllModelsSortBy(U modelKey,U2 modelKey2) ;
 
     // query script (it's file!) *** query by ResourceDatabasePopulator
+    // you can have many sql command in script
     public void loadScript(String fileName, DataSource dataSource) {
         String fullSqlScriptDirOnRoot = sqlScriptDirOnRoot + fileName;
         log.info("Loading script from  {}" , fullSqlScriptDirOnRoot);
@@ -36,7 +37,9 @@ public abstract class ModelServiceCommon <T> implements RowMapper<T> {
     }
 
     // query script (not file!) and pass params *** query by JdbcTemplate
-    public void loadScript(Class aClass,String fileName, JdbcTemplate jdbcTemplateSQL, HashMap<String,String> params) throws SQLException, IOException {
+    // (MYSQL ONLY) you can have only one sql command in script ex, reload-mysql-students-table-params.sql
+    public void
+    loadScript(Class aClass,String fileName, JdbcTemplate jdbcTemplateSQL, HashMap<String,String> params) throws SQLException, IOException {
         String fullSqlScriptDirOnRoot = sqlScriptDirOnRoot + fileName;
         StringBuilder stringBuilder = readSQLFileAsString(aClass,fullSqlScriptDirOnRoot);
         String sql = stringBuilder.toString();

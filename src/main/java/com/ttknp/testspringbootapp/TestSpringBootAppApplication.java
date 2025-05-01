@@ -5,6 +5,7 @@ import com.ttknp.testspringbootapp.entities.UserDetail;
 import com.ttknp.testspringbootapp.entities.common.RequestResponseDataTableCommon;
 import com.ttknp.testspringbootapp.services.StudentServiceCommon;
 import com.ttknp.testspringbootapp.services.UserDetailServiceCommon;
+import com.ttknp.testspringbootapp.services.UserDetailServiceHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -20,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -44,8 +44,9 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
     private StudentService studentService;
     private UserDetailService userDetailService;
     */
-    private final StudentServiceCommon studentServiceCommon;
-    private final UserDetailServiceCommon userDetailServiceCommon;
+    private final StudentServiceCommon studentServiceCommon = null;
+    private final UserDetailServiceCommon userDetailServiceCommon  = null;
+    private final UserDetailServiceHelper userDetailServiceHelper;
     /*
     @Autowired
     // custom connect dbs with java code
@@ -60,11 +61,23 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
         this.studentRepo = studentRepo;
     }
     */
+
+
+    /*
+    // for testBusinessService()
     @Autowired
     public TestSpringBootAppApplication(StudentServiceCommon studentServiceCommon, UserDetailServiceCommon userDetailServiceCommon) { // StudentService studentService,UserDetailService userDetailService
         this.studentServiceCommon = studentServiceCommon;
         this.userDetailServiceCommon = userDetailServiceCommon;
     }
+    */
+
+    // for testBusinessServiceCompound()
+    @Autowired
+    public TestSpringBootAppApplication(UserDetailServiceHelper userDetailServiceHelper) {
+        this.userDetailServiceHelper = userDetailServiceHelper;
+    }
+
 
     // ** private static final Logger log = LoggerFactory.getLogger(TestSpringBootAppApplication.class);
     /**
@@ -131,12 +144,49 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
 
     @Override
     public void run(String... args) throws Exception {
-        testBusinessService();
+        // testBusinessService();
+        testBusinessServiceCompound();
     }
 
-    /** private void testBusinessService2() throws Exception {
-        // this.userDetailServiceCommon.addModelTest();
-    }*/
+    /**
+
+    */
+    private void testBusinessServiceCompound() throws Exception {
+        // userDetailServiceHelper.updateFirstnameById("Ajax",2);
+        // log.info("total rows updated {}",userDetailServiceHelper.updateFirstnameByIdMoreThan("Robert",2));
+        UserDetail newUser = new UserDetail();
+        newUser.firstname = "Jose";
+        newUser.lastname = "Aldo";
+        newUser.email = "Jose@aldo.com";
+        newUser.age = 31;
+        newUser.phone= "0911231933";
+        log.info("total rows updated {}",userDetailServiceHelper.updateById(newUser,3));
+        // log.info("total rows by id >= 3 is {}",userDetailServiceHelper.selectCountRowsByIdMoreThan(3));
+        // log.info("id 3 is {}",userDetailServiceHelper.selectById(3));
+        // log.info("id 3 is {}",userDetailServiceHelper.selectByIdAsObject(3));
+
+        /*
+        List<UserDetail> userDetails = userDetailServiceHelper.selectAll();
+        for (int i = 0; i < userDetails.size(); i++) {
+            log.info("User Detail Helper {} : {} ", i, userDetails.get(i));
+        }
+        */
+
+        /*
+        List<?> userDetails = userDetailServiceHelper.selectAllAsObject();
+        for (int i = 0; i < userDetails.size(); i++) {
+            log.info("User Detail Helper {} : {} ", i, userDetails.get(i));
+        }
+        */
+
+        /*List<UserDetail> userDetails = userDetailServiceHelper.selectAllAsObjectThenConvertToList();
+        for (int i = 0; i < userDetails.size(); i++) {
+            log.info("User Detail Helper {} : {} ", i, userDetails.get(i));
+        }*/
+
+        // log.info("total user age 29 is {} ", userDetailServiceHelper.selectCountRowsByAge(36));
+
+    }
 
     private void testBusinessService() {
         /**

@@ -12,6 +12,14 @@
         <property name="password" value="Arch.890.098"/>
     </bean>
 
+    <bean name="dataSourceSQLExtra" id="dataSourceSQLExtra" class="org.springframework.jdbc.datasource.DriverManagerDataSource" > <!--destroy-method="close"-->
+        <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+        <property name="url" value="jdbc:sqlserver://localhost:1433;database=TTKNP;encrypt=true;trustServerCertificate=true;"/>
+        <property name="username" value="ttknp"/>
+        <property name="password" value="Arch.890.098"/>
+    </bean>
+
+
 
 
 </beans>
