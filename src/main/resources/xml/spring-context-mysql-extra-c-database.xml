@@ -6,13 +6,11 @@
 
     <!-- primary="true" work same @Primary for fix error have the same beans -->
 
-    <bean name="dataSourceMySQL" id="dataSourceMySQL" class="org.springframework.jdbc.datasource.DriverManagerDataSource" > <!--destroy-method="close"-->
+    <bean name="dataSourceMySQLExtraC" id="dataSourceMySQLExtraC" class="org.springframework.jdbc.datasource.DriverManagerDataSource" > <!--destroy-method="close"-->
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
         <property name="url" value="jdbc:mysql://localhost:3306/ttknp"/>
         <property name="username" value="root"/>
         <property name="password" value=""/>
     </bean>
-
-
 
 </beans>

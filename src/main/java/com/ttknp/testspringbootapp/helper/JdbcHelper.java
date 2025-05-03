@@ -3,6 +3,7 @@ package com.ttknp.testspringbootapp.helper;
 import com.ttknp.testspringbootapp.entities.UserDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class JdbcHelper {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcHelper(DataSource dataSourceSQL) {
+    public JdbcHelper( DataSource dataSourceSQL) {
         this.jdbcTemplate = new JdbcTemplate(dataSourceSQL);
     }
 

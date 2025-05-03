@@ -1,23 +1,37 @@
 package com.ttknp.testspringbootapp;
 
+import com.ttknp.testspringbootapp.configuration.CustomDriverConfigAndServiceByXML;
+import com.ttknp.testspringbootapp.configuration.CustomDriverConfigAndServicePassConstructorByXML;
+import com.ttknp.testspringbootapp.configuration.CustomDriverConfigPassConstructorByXML;
+import com.ttknp.testspringbootapp.configuration.CustomDriverConfigByXML;
+import com.ttknp.testspringbootapp.configuration.apply_helper.ClientAndEmployeeConfigByXML;
 import com.ttknp.testspringbootapp.entities.Student;
 import com.ttknp.testspringbootapp.entities.UserDetail;
+import com.ttknp.testspringbootapp.entities.apply_helper.Client;
+import com.ttknp.testspringbootapp.entities.apply_helper.Employee;
 import com.ttknp.testspringbootapp.entities.common.RequestResponseDataTableCommon;
-import com.ttknp.testspringbootapp.services.StudentServiceCommon;
-import com.ttknp.testspringbootapp.services.UserDetailServiceCommon;
-import com.ttknp.testspringbootapp.services.UserDetailServiceHelper;
+import com.ttknp.testspringbootapp.helper.ApplicationContextHelper;
+import com.ttknp.testspringbootapp.services.*;
+import com.ttknp.testspringbootapp.services.apply_helper.ClientService;
+import com.ttknp.testspringbootapp.services.apply_helper.ClientServiceManual;
+import com.ttknp.testspringbootapp.services.apply_helper.EmployeeService;
+import com.ttknp.testspringbootapp.services.apply_helper.EmployeeServiceManual;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
@@ -28,13 +42,16 @@ import java.util.List;
 import java.util.Set;
 
 
-@Slf4j // config logback by using annotation
+@Slf4j // ** config logback by using annotation
 @SpringBootApplication
 @RestController
-// @Component
 @Configuration
 public class TestSpringBootAppApplication implements CommandLineRunner { // implements CommandLineRunner
-    /*
+
+    // private static final Logger log = LoggerFactory.getLogger(TestSpringBootAppApplication.class); // ** config logback by using manual
+
+
+    /**
     private JdbcTemplate jdbcTemplateSQL;
     private JdbcTemplate jdbcTemplateMySQL;
 
@@ -43,18 +60,15 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
 
     private StudentService studentService;
     private UserDetailService userDetailService;
-    */
-    private final StudentServiceCommon studentServiceCommon = null;
-    private final UserDetailServiceCommon userDetailServiceCommon  = null;
-    private final UserDetailServiceHelper userDetailServiceHelper;
-    /*
+
+    ** Custom connect dbs with java code ** multiple databases
+    ** You can see if you didn't mark StudentService,UserDetailService with @Service
+    ** You have to inject as manual
     @Autowired
-    // custom connect dbs with java code
-    // multiple databases
     public TestSpringBootAppApplication(@Qualifier("dataSourceSQL") DataSource dataSourceSQL,
                                         @Qualifier("dataSourceMySQL") DataSource dataSourceMySQL,
                                         UserDetailRepo userDetailRepo,
-                                        StudentRepo studentRepo) { // , UserDetailRepo userDetailRepo
+                                        StudentRepo studentRepo) {
         this.jdbcTemplateSQL = new JdbcTemplate(dataSourceSQL);
         this.jdbcTemplateMySQL = new JdbcTemplate(dataSourceMySQL);
         this.userDetailRepo = userDetailRepo;
@@ -63,8 +77,13 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
     */
 
 
-    /*
-    // for testBusinessService()
+
+    private final StudentServiceCommon studentServiceCommon = null;
+    private final UserDetailServiceCommon userDetailServiceCommon  = null;
+    /**
+    For testing on testBusinessService()
+    You can see if you mark  StudentServiceCommon,UserDetailServiceCommon with @Service
+    You can inject by without Datasource
     @Autowired
     public TestSpringBootAppApplication(StudentServiceCommon studentServiceCommon, UserDetailServiceCommon userDetailServiceCommon) { // StudentService studentService,UserDetailService userDetailService
         this.studentServiceCommon = studentServiceCommon;
@@ -72,23 +91,248 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
     }
     */
 
-    // for testBusinessServiceCompound()
+    private final UserDetailServiceHelper userDetailServiceHelper = null;
+    /**
+    For testing on testBusinessServiceCompound()
+    Mark TestSpringBootAppApplication with @Service
     @Autowired
     public TestSpringBootAppApplication(UserDetailServiceHelper userDetailServiceHelper) {
         this.userDetailServiceHelper = userDetailServiceHelper;
     }
+    */
+
+    // Perfect! Understand Application Context
+    class TestApplicationContext {
+
+        /**
+         Spring provides different types of ApplicationContext containers suitable for different requirements.
+         These are implementations of the ApplicationContext interface.
+         First, let’s see the AnnotationConfigApplicationContext class, which was introduced in Spring 3.0.
+         It can take classes annotated with @Configuration, @Component, and JSR-330 metadata as input
+         */
+
+        // Retrieving Bean by Name ** Manual because CustomDriverConfigByXML config only have Datasource
+        // That's why StudentExtraServiceForCustomDriverConfigByXML didn't mark @Service
+        private static void byConfigClassAndGetDatasourceToServices() {
+            // Convert Configuration class to beans
+            ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CustomDriverConfigByXML.class); // config by java class
+            // Get datasource from application context by bean name
+            // applicationContext.getBean("dataSourceMySQLExtra") = return data of bean as DriverManagerDataSource class
+            DriverManagerDataSource dataSourceExtraA = (DriverManagerDataSource) applicationContext.getBean("dataSourceMySQLExtraA");
+            DriverManagerDataSource dataSourceExtraB = (DriverManagerDataSource) applicationContext.getBean("dataSourceMySQLExtraB");
+
+            // In mysql didn't have schema
+            log.info("dataSourceExtraA url {} schema {}", dataSourceExtraA.getUrl() , dataSourceExtraA.getSchema());
+            log.info("dataSourceExtraB password {} username {}", dataSourceExtraB.getPassword() , dataSourceExtraB.getUsername());
+
+            StudentExtraServiceForCustomDriverConfigByXML studentExtraAService = new StudentExtraServiceForCustomDriverConfigByXML();
+            studentExtraAService.setStudentExtraServiceJdbc(dataSourceExtraA); //
+
+            for (Student student : studentExtraAService.getAllModels()) {
+                log.info("student extra a {}", student);
+            }
+
+            StudentExtraServiceForCustomDriverConfigByXML studentExtraBService = new StudentExtraServiceForCustomDriverConfigByXML();
+            studentExtraBService.setStudentExtraServiceJdbc(dataSourceExtraB);
+
+            for (Student student : studentExtraBService.getAllModels()) {
+                log.info("student extra b {}", student);
+            }
+
+        }
+
+        // Retrieving Bean by Name , Type ** Auto inject
+        // That's why StudentExtraServiceForCustomDriverConfigAndServiceByXML mark @Bean
+        private static void byConfigClassAndGetServices() {
+            // Convert Configuration class to beans
+            ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CustomDriverConfigAndServiceByXML.class); // config by java class
+            // ** Get Service from application context by bean class
+            // You have to set config datasource and add to service on CustomDriverConfigAndServiceByXML.class
+            // it maps @Bean(name="")
+            StudentExtraServiceForCustomDriverConfigAndServiceByXML serviceA = applicationContext.getBean("extraServiceA",StudentExtraServiceForCustomDriverConfigAndServiceByXML.class);
+
+            for (Student student : serviceA.getAllModels()) {
+                log.info("student extra a {}", student);
+            }
+
+            StudentExtraServiceForCustomDriverConfigAndServiceByXML serviceB = applicationContext.getBean("extraServiceB",StudentExtraServiceForCustomDriverConfigAndServiceByXML.class);
+            for (Student student : serviceB.getAllModels()) {
+                log.info("student extra b {}", student);
+            }
+        }
+
+        // ** Retrieving Bean by Name Return as Object ** Auto inject
+        private static void byConfigClassAndGetObjects() {
+            // Convert Configuration class to beans
+            ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CustomDriverConfigAndServiceByXML.class);
+            // Get object bean from application context by bean name
+            Object extraServiceA = applicationContext.getBean("extraServiceA");
+            Object extraServiceB = applicationContext.getBean("extraServiceB");
+            Object extraServiceC = applicationContext.getBean("extraServiceC");
+            log.info("Is extraAService.class equal StudentExtraServiceForCustomDriverConfigAndServiceByXML.class  {}", extraServiceA.getClass() == StudentExtraServiceForCustomDriverConfigAndServiceByXML.class);
+            log.info("Is extraBService.class equal StudentExtraServiceForCustomDriverConfigAndServiceByXML.class  {}", extraServiceB.getClass() == StudentExtraServiceForCustomDriverConfigAndServiceByXML.class);
+            log.info("Is extraCService.class equal StudentExtraServiceForCustomDriverConfigAndServiceByXML.class  {}", extraServiceC.getClass() == StudentExtraServiceForCustomDriverConfigAndServiceByXML.class);
+        }
+
+        // ** Retrieving Bean by Name and Pass Constructor ** Manual
+        private static void byConfigClassAndGetObjectsPassConstructor() {
+            ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CustomDriverConfigPassConstructorByXML.class);
+            DriverManagerDataSource dataSourceExtraA =  (DriverManagerDataSource) applicationContext.getBean("dataSourceMySQLExtraA");
+            // It's very smart!!
+            // Behind the sense is looks like Object extraServiceA = setStudentExtraAServicePassConstructor(dataSourceExtraA)
+            Object extraServiceA = applicationContext.getBean("extraServiceA",dataSourceExtraA);
+            log.info("Is extraAService.class equal StudentExtraServiceForCustomDriverConfigAndServiceByXML.class  {}", extraServiceA.getClass() == StudentExtraServiceForCustomDriverConfigAndServiceByXML.class);
+            log.info("class name {}", extraServiceA.getClass().getSimpleName()); // StudentExtraServiceForCustomDriverConfigAndServiceByXML
+        }
+
+        // ** Retrieving Bean by Name and Pass Constructor ** Auto inject
+        private static void byConfigClassAndGetObjectsPassConstructorAuto() {
+            ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CustomDriverConfigAndServicePassConstructorByXML.class);
+            // It's very smart!!
+            Object extraServiceA = applicationContext.getBean("extraServiceA");
+            log.info("Is extraAService.class equal StudentExtraServiceForCustomDriverConfigAndServiceByXML.class  {}", extraServiceA.getClass() == StudentExtraServiceForCustomDriverConfigAndServiceByXML.class);
+            log.info("class name {}", extraServiceA.getClass().getSimpleName()); // StudentExtraServiceForCustomDriverConfigAndServiceByXML
+        }
+
+    }
+
+    private void testBusinessApplicationContext() {
+        // TestApplicationContextHelper.byConfigClassAndGetDatasourceToServices();
+        // TestApplicationContextHelper.byConfigClassAndGetServices();
+        // TestApplicationContextHelper.byConfigClassAndGetObjects();
+        // TestApplicationContextHelper.byConfigClassAndGetObjectsPassConstructor();
+        // TestApplicationContextHelper.byConfigClassAndGetObjectsPassConstructorAuto();
+    }
 
 
-    // ** private static final Logger log = LoggerFactory.getLogger(TestSpringBootAppApplication.class);
+
+    // Perfect! Apply Application Context
+    class TestApplicationContextHelper {
+
+        // ** Auto inject
+        private static void testBusinessApplicationContextHelper() {
+            ApplicationContextHelper applicationContextHelper = new ApplicationContextHelper();
+            ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CustomDriverConfigAndServicePassConstructorByXML.class);
+            applicationContextHelper.setApplicationContext(applicationContext);
+            log.info("table name of bean is (by class) {}",applicationContextHelper.getTableNameByBean(StudentExtraServiceForCustomDriverConfigAndServiceByXML.class));
+            log.info("table name of bean is (by name) {}",applicationContextHelper.getTableNameByBean("extraServiceA"));
+        }
+
+    }
+
+    private void testBusinessApplicationContextHelper() {
+        // TestApplicationContextHelper.testBusinessApplicationContextHelper();
+    }
+
+
+    // apply_helper
+    private ApplicationContextHelper applicationContextHelper;
+    // way to get context after this app loaded bean !! very perfect
+    @Autowired
+    @Getter
+    private ApplicationContext applicationContext;
+
+
+    // apply_helper ** Auto inject Manual get beans
+    // private final ClientService clientService = null;
+    // private final EmployeeService employeeService = null;
+
+    private void testBusinessServiceApplyHelperAutoInjectManualGetBeans() {
+        applicationContextHelper = new ApplicationContextHelper();
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(ClientAndEmployeeConfigByXML.class); // config by java class
+        applicationContextHelper.setApplicationContext(applicationContext);
+
+        ClientService clientService = applicationContext.getBean(ClientService.class);
+        EmployeeService employeeService = applicationContext.getBean(EmployeeService.class);
+
+        String tableName = applicationContextHelper.getTableNameByBean(ClientService.class);
+
+        List<Client> clients = clientService.getAllModelsByTableName(tableName);
+        for (int i = 0; i < clients.size(); i++) {
+            log.info("client {} : {} ", i, clients.get(i));
+        }
+
+        List<Employee> employees = employeeService.getAllModels();
+        for (int i = 0; i < employees.size(); i++) {
+            log.info("employee {} : {} ", i, employees.get(i));
+        }
+
+    }
+
+
+    // apply_helper ** Auto inject and get beans
+    private final ClientServiceManual clientServiceManual = null;
+    private final EmployeeServiceManual employeeServiceManual  = null;
+    /*
+    @Autowired // if you didn't mark @Service to ClientService,EmployeeService you can inject like this ** mark @Component instead
+    public TestSpringBootAppApplication(@Qualifier("dataSourceMySQLExtraD") DataSource dataSourceEmployee,
+                                        @Qualifier("dataSourceMySQLExtraE") DataSource dataSourceClient) {
+        this.employeeServiceManual = new EmployeeServiceManual(dataSourceEmployee);
+        this.clientServiceManual = new ClientServiceManual(dataSourceClient);
+    }
+    */
+    private void testBusinessServiceApplyHelperAutoInjectAndGetBeans() {
+
+        applicationContextHelper = new ApplicationContextHelper();
+        applicationContextHelper.setApplicationContext(getApplicationContext());
+
+        String tableName = applicationContextHelper.getTableNameByBean(ClientServiceManual.class);
+
+        List<Client> clients = this.clientServiceManual.getAllModelsByTableName(tableName);
+        for (int i = 0; i < clients.size(); i++) {
+            log.info("client {} : {} ", i, clients.get(i));
+        }
+
+        List<Employee> employees = this.employeeServiceManual.getAllModels();
+        for (int i = 0; i < employees.size(); i++) {
+            log.info("employee {} : {} ", i, employees.get(i));
+        }
+
+        // check beans name
+        //        String[] beanNames = applicationContext.getBeanDefinitionNames();
+        //        Arrays.sort(beanNames);
+        //        for (String beanName : beanNames) {
+        //            System.out.println(beanName);
+        //        }
+
+    }
+
+
+    private final ClientService clientService=null;
+    private final EmployeeService employeeService =null;
+    /*
+    @Autowired // if you mark @Service to ClientService,EmployeeService you can inject like this
+    public TestSpringBootAppApplication(ClientService clientService, EmployeeService employeeService) {
+        this.clientService = clientService;
+        this.employeeService = employeeService;
+    }
+    */
+    private void testBusinessServiceApplyHelperAutoInjectAndGetBeansDefault() {
+        applicationContextHelper = new ApplicationContextHelper();
+        applicationContextHelper.setApplicationContext(getApplicationContext());
+
+        String tableName = applicationContextHelper.getTableNameByBean(ClientServiceManual.class);
+        List<Client> clients = clientService.getAllModelsByTableName(tableName);
+        for (int i = 0; i < clients.size(); i++) {
+            log.info("client {} : {} ", i, clients.get(i));
+        }
+
+        List<Employee> employees = employeeService.getAllModels();
+        for (int i = 0; i < employees.size(); i++) {
+            log.info("employee {} : {} ", i, employees.get(i));
+        }
+    }
+
+
+
     /**
-     * @GetMapping
-     * @ResponseBody
-     * @ResponseStatus(HttpStatus.ACCEPTED) public String hello() {
-     * log.info("http://localhost:8080 is requested");
-     * return "Hello World";
-     * }
+     @GetMapping
+     @ResponseBody
+     @ResponseStatus(HttpStatus.ACCEPTED) public String hello() {
+       log.info("http://localhost:8080 is requested");
+       return "Hello World";
+     }
      */
-
 
     @GetMapping(value = {"/hello-world", "/hello", "/", ""})
     public ResponseEntity hello() {
@@ -106,7 +350,6 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
                 .header("Data", "Hello World")
                 .body(null);
     }
-
 
     @PostMapping(value = "/students")
     public RequestResponseDataTableCommon.Response< Student > retrieveAllStudents(@RequestBody RequestResponseDataTableCommon.Request request) {
@@ -134,7 +377,7 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
         userDetailServiceCommon.removeModelByPk(id);
     }
 
-    /*
+    /**
     public static void main(String[] args) {
         DataSource dataSource = getDataSourceFromXml();
         // Use the dataSource
@@ -142,15 +385,6 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
     }
     */
 
-    @Override
-    public void run(String... args) throws Exception {
-        // testBusinessService();
-        testBusinessServiceCompound();
-    }
-
-    /**
-
-    */
     private void testBusinessServiceCompound() throws Exception {
         // userDetailServiceHelper.updateFirstnameById("Ajax",2);
         // log.info("total rows updated {}",userDetailServiceHelper.updateFirstnameByIdMoreThan("Robert",2));
@@ -164,7 +398,6 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
         // log.info("total rows by id >= 3 is {}",userDetailServiceHelper.selectCountRowsByIdMoreThan(3));
         // log.info("id 3 is {}",userDetailServiceHelper.selectById(3));
         // log.info("id 3 is {}",userDetailServiceHelper.selectByIdAsObject(3));
-
         /*
         List<UserDetail> userDetails = userDetailServiceHelper.selectAll();
         for (int i = 0; i < userDetails.size(); i++) {
@@ -183,9 +416,7 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
         for (int i = 0; i < userDetails.size(); i++) {
             log.info("User Detail Helper {} : {} ", i, userDetails.get(i));
         }*/
-
         // log.info("total user age 29 is {} ", userDetailServiceHelper.selectCountRowsByAge(36));
-
     }
 
     private void testBusinessService() {
@@ -252,6 +483,8 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
         // studentServiceCommon.removeModelBy3Pk("A0002" , "Bob Johnson" , 22);
     }
 
+
+
     // get connection by retrieved an DriverManagerDataSource bean on xml *** manual
     public static void getDataSourceFromXmlAndTestConfig() throws SQLException {
         ApplicationContext context = new ClassPathXmlApplicationContext("xml/spring-context.xml");
@@ -267,10 +500,18 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
         Set<String> pathBeanOnXml = new HashSet<>();
         // set the bean paths
         pathBeanOnXml.add("file:D:/my_apps/git-fork-apps/understand-git-fork/test-spring-boot-app-for-working/src/main/resources/xml/spring-context-mysql-database.xml");
+        /*
+        Config by annotation
+        pathBeanOnXml.add("file:D:/my_apps/git-fork-apps/understand-git-fork/test-spring-boot-app-for-working/src/main/resources/xml/spring-context-mysql-extra-a-database.xml");
+        pathBeanOnXml.add("file:D:/my_apps/git-fork-apps/understand-git-fork/test-spring-boot-app-for-working/src/main/resources/xml/spring-context-mysql-extra-b-database.xml");
+        pathBeanOnXml.add("file:D:/my_apps/git-fork-apps/understand-git-fork/test-spring-boot-app-for-working/src/main/resources/xml/spring-context-mysql-extra-c-database.xml");
+        pathBeanOnXml.add("file:D:/my_apps/git-fork-apps/understand-git-fork/test-spring-boot-app-for-working/src/main/resources/xml/spring-context-mysql-extra-d-database.xml");
+        pathBeanOnXml.add("file:D:/my_apps/git-fork-apps/understand-git-fork/test-spring-boot-app-for-working/src/main/resources/xml/spring-context-mysql-extra-e-database.xml");*/
         pathBeanOnXml.add("file:D:/my_apps/git-fork-apps/understand-git-fork/test-spring-boot-app-for-working/src/main/resources/xml/spring-context-sql-database.xml");
         // start app
         SpringApplication application = new SpringApplication(TestSpringBootAppApplication.class);
         application.addListeners(new ApplicationPidFileWriter());
+
         // set resource paths to app
         application.setSources(pathBeanOnXml);
         // get env from app
@@ -287,11 +528,23 @@ public class TestSpringBootAppApplication implements CommandLineRunner { // impl
         log.debug("env exists {}", configurableEnvironment.getSystemEnvironment());
         // java.specification.version=17, sun.cpu.isalist=amd64, sun.jnu.encoding=MS874, java.class.path=D:\my_apps\git-fork-apps\\understand-git-fork\test-spring-boot-app-for-working\target\classes;C:\Users\A
         log.debug("env exists {}", configurableEnvironment.getSystemProperties());
+
     }
 
     public static void main(String[] args) throws SQLException {
         // SpringApplication.run(TestSpringBootAppApplication.class, args); // Run by auto config have to use @ImportResource() annotation
         startSpringBootWithoutImportResourceAnnotation(TestSpringBootAppApplication.class, args); // Custom runner
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        // testBusinessService();
+        // testBusinessServiceCompound();
+        // testBusinessApplicationContext();
+        // testBusinessApplicationContextHelper();
+        // testBusinessServiceApplyHelperAutoInjectManualGetBeans();
+        // testBusinessServiceApplyHelperAutoInjectAndGetBeans();
+        // testBusinessServiceApplyHelperAutoInjectAndGetBeansDefault();
     }
 
 }
